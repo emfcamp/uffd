@@ -3,8 +3,9 @@ import re
 import datetime
 import unicodedata
 
-from flask import current_app, escape
+from flask import current_app
 from flask_babel import lazy_gettext
+from markupsafe import escape
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Text, DateTime
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -61,7 +62,7 @@ class IDAllocator:
 	def allocate(self, id):
 		self.lock.acquire()
 		result = db.session.execute(
-			db.select([self.allocation_table.c.id])
+			db.select(self.allocation_table.c.id)
 			.where(self.allocation_table.c.id == id)
 		).scalar()
 		if result is not None:
@@ -79,13 +80,13 @@ class IDAllocator:
 		# min_id). To fix this we also check if min_id is used or not.
 		tmp = db.aliased(self.allocation_table)
 		first_unused_id = db.session.execute(
-			db.select([db.func.min(self.allocation_table.c.id + 1)])
+			db.select(db.func.min(self.allocation_table.c.id + 1))
 			.where(self.allocation_table.c.id >= min_id)
 			.where(db.not_(db.exists().where(tmp.c.id == self.allocation_table.c.id + 1)))
 		).scalar()
 		min_id_used = db.session.execute(
-			db.select([db.exists()
-			.where(self.allocation_table.c.id == min_id)])
+			db.select(db.exists()
+			.where(self.allocation_table.c.id == min_id))
 		).scalar()
 		if not min_id_used:
 			first_unused_id = min_id
@@ -306,7 +307,7 @@ class UserEmail(db.Model):
 	enable_strict_constraints = Column(
 		Boolean(create_constraint=True),
 		nullable=True,
-		default=db.select([db.case([(FeatureFlag.unique_email_addresses.expr, True)], else_=None)])
+		default=db.select(db.case((FeatureFlag.unique_email_addresses.expr, True), else_=None))
 	)
 
 	# The unique constraints rely on the common interpretation of SQL92, that if
