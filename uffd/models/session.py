@@ -3,7 +3,7 @@ import secrets
 import enum
 
 from flask import current_app
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum, Text, Boolean
+from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Enum, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.hybrid import hybrid_property
 from flask_babel import gettext as _
@@ -36,8 +36,6 @@ class Session(db.Model):
 	last_used = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 	user_agent = Column(Text, nullable=False, default='')
 	ip_address = Column(Text)
-
-	mfa_done = Column(Boolean(create_constraint=True), default=False, nullable=False)
 
 	@hybrid_property
 	def expired(self):
