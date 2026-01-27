@@ -1032,7 +1032,7 @@ msgstr "E-Mail-Adressen"
 #: uffd/templates/selfservice/self.html:38
 msgid ""
 "Add and delete addresses associated with your account. You will need to "
-"verify new addresses by opening a link set to them."
+"verify new addresses by opening a link sent to them."
 msgstr ""
 "Füge neue Adressen zu deinem Account hinzu oder löschen vorhandene. Neue "
 "Adressen müssen bestätigt werden, bevor sie verwendet werden können. Dazu"
