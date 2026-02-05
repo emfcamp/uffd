@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-03-24 18:37+0100\n"
+"POT-Creation-Date: 2026-02-05 13:46+0100\n"
 "PO-Revision-Date: 2021-05-25 21:18+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -17,6 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.10.3\n"
+
+#: uffd/fido2_compat.py:45
+#, python-format
+msgid ""
+"2FA WebAuthn support disabled because import of the fido2 module failed "
+"(%s)"
+msgstr ""
+"2FA WebAuthn Unterstützung deaktiviert, da das fido2 Modul nicht geladen "
+"werden konnte (%s)"
 
 #: uffd/models/invite.py:84 uffd/models/invite.py:107 uffd/models/invite.py:112
 msgid "Invite link is invalid"
@@ -31,7 +40,7 @@ msgid "Invite link does not grant any new roles"
 msgstr "Einladungslink weist keine neuen Rollen zu"
 
 #: uffd/models/invite.py:93 uffd/models/signup.py:122
-#: uffd/templates/mfa/setup.html:225
+#: uffd/templates/selfservice/setup_mfa.html:225
 msgid "Success"
 msgstr "Erfolgreich"
 
@@ -78,12 +87,12 @@ msgstr "Anmeldename ist ungültig"
 msgid "Display name is invalid"
 msgstr "Anzeigename ist ungültig"
 
-#: uffd/models/signup.py:84 uffd/views/selfservice.py:112 uffd/views/user.py:51
+#: uffd/models/signup.py:84 uffd/views/selfservice.py:117 uffd/views/user.py:51
 #: uffd/views/user.py:99
 msgid "E-Mail address is invalid"
 msgstr "Ungültige E-Mail-Adresse"
 
-#: uffd/models/signup.py:86 uffd/views/selfservice.py:49
+#: uffd/models/signup.py:86 uffd/views/selfservice.py:54
 msgid "Invalid password"
 msgstr "Passwort ungültig"
 
@@ -160,12 +169,15 @@ msgstr "GID"
 
 #: uffd/templates/group/list.html:15 uffd/templates/group/show.html:26
 #: uffd/templates/invite/new.html:35 uffd/templates/mail/list.html:14
-#: uffd/templates/mail/show.html:7 uffd/templates/mfa/setup.html:98
-#: uffd/templates/mfa/setup.html:99 uffd/templates/mfa/setup.html:107
-#: uffd/templates/mfa/setup.html:157 uffd/templates/mfa/setup.html:158
-#: uffd/templates/mfa/setup.html:169 uffd/templates/role/list.html:14
+#: uffd/templates/mail/show.html:7 uffd/templates/role/list.html:14
 #: uffd/templates/rolemod/list.html:9 uffd/templates/rolemod/show.html:44
 #: uffd/templates/selfservice/self.html:239
+#: uffd/templates/selfservice/setup_mfa.html:98
+#: uffd/templates/selfservice/setup_mfa.html:99
+#: uffd/templates/selfservice/setup_mfa.html:107
+#: uffd/templates/selfservice/setup_mfa.html:157
+#: uffd/templates/selfservice/setup_mfa.html:158
+#: uffd/templates/selfservice/setup_mfa.html:169
 #: uffd/templates/service/index.html:14 uffd/templates/service/show.html:20
 #: uffd/templates/service/show.html:140 uffd/templates/user/show.html:212
 #: uffd/templates/user/show.html:244
@@ -188,13 +200,13 @@ msgid "Save"
 msgstr "Speichern"
 
 #: uffd/templates/group/show.html:9 uffd/templates/invite/new.html:56
-#: uffd/templates/mail/show.html:28 uffd/templates/mfa/auth.html:33
-#: uffd/templates/role/show.html:14 uffd/templates/rolemod/show.html:9
-#: uffd/templates/service/api.html:9 uffd/templates/service/oauth2.html:9
-#: uffd/templates/service/show.html:10
+#: uffd/templates/mail/show.html:28 uffd/templates/role/show.html:14
+#: uffd/templates/rolemod/show.html:9 uffd/templates/service/api.html:9
+#: uffd/templates/service/oauth2.html:9 uffd/templates/service/show.html:10
 #: uffd/templates/session/deviceauth.html:39
 #: uffd/templates/session/deviceauth.html:49
-#: uffd/templates/session/devicelogin.html:29 uffd/templates/user/show.html:32
+#: uffd/templates/session/devicelogin.html:29
+#: uffd/templates/session/mfa_auth.html:41 uffd/templates/user/show.html:32
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -210,12 +222,13 @@ msgstr "Wirklich fortfahren?"
 
 #: uffd/templates/group/show.html:11 uffd/templates/group/show.html:13
 #: uffd/templates/mail/show.html:30 uffd/templates/mail/show.html:32
-#: uffd/templates/mfa/setup.html:117 uffd/templates/mfa/setup.html:179
 #: uffd/templates/role/show.html:21 uffd/templates/role/show.html:24
-#: uffd/templates/selfservice/self.html:62 uffd/templates/service/api.html:12
-#: uffd/templates/service/oauth2.html:12 uffd/templates/service/show.html:13
-#: uffd/templates/user/show.html:41 uffd/templates/user/show.html:43
-#: uffd/templates/user/show.html:116
+#: uffd/templates/selfservice/self.html:62
+#: uffd/templates/selfservice/setup_mfa.html:117
+#: uffd/templates/selfservice/setup_mfa.html:179
+#: uffd/templates/service/api.html:12 uffd/templates/service/oauth2.html:12
+#: uffd/templates/service/show.html:13 uffd/templates/user/show.html:41
+#: uffd/templates/user/show.html:43 uffd/templates/user/show.html:116
 msgid "Delete"
 msgstr "Löschen"
 
@@ -466,374 +479,6 @@ msgstr ""
 msgid "One address per line"
 msgstr "Eine Adresse pro Zeile"
 
-#: uffd/templates/mfa/auth.html:6 uffd/templates/selfservice/self.html:159
-#: uffd/templates/user/show.html:188
-msgid "Two-Factor Authentication"
-msgstr "Zwei-Faktor-Authentifizierung"
-
-#: uffd/templates/mfa/auth.html:11
-msgid "Enable javascript for authentication with U2F/FIDO2 devices"
-msgstr "Aktiviere Javascript zur Authentifizierung mit U2F/FIDO2 Geräten"
-
-#: uffd/templates/mfa/auth.html:15
-msgid "Authentication with U2F/FIDO2 devices is not supported by your browser"
-msgstr ""
-"Authentifizierung mit U2F/FIDO2 Geräten wird von deinem Browser nicht "
-"unterstützt"
-
-#: uffd/templates/mfa/auth.html:21
-msgid "Authenticate with U2F/FIDO2 device"
-msgstr "Authentifiziere dich mit einem U2F/FIDO2-Gerät"
-
-#: uffd/templates/mfa/auth.html:24
-msgid "or"
-msgstr "oder"
-
-#: uffd/templates/mfa/auth.html:27
-msgid "Code from your authenticator app or recovery code"
-msgstr "Code aus deiner Authentifikator-App oder Wiederherstellungscode"
-
-#: uffd/templates/mfa/auth.html:30
-msgid "Verify"
-msgstr "Verifizieren"
-
-#: uffd/templates/mfa/auth.html:43 uffd/templates/mfa/setup.html:199
-msgid "Contacting server"
-msgstr "Verbinde mit Server"
-
-#: uffd/templates/mfa/auth.html:52 uffd/templates/mfa/auth.html:80
-msgid "Session timed out"
-msgstr "Sitzung abgelaufen"
-
-#: uffd/templates/mfa/auth.html:54
-msgid "You have not registered any U2F/FIDO2 devices for your account"
-msgstr "Es sind keine U2F/FIDO2-Geräte für deinen Account registriert"
-
-#: uffd/templates/mfa/auth.html:56 uffd/templates/mfa/setup.html:208
-msgid "Server error"
-msgstr "Serverfehler"
-
-#: uffd/templates/mfa/auth.html:59 uffd/templates/mfa/setup.html:210
-msgid "Waiting for device"
-msgstr "Warte auf Gerät"
-
-#: uffd/templates/mfa/auth.html:62
-msgid "Verifing response"
-msgstr "Überprüfe Antwort"
-
-#: uffd/templates/mfa/auth.html:76
-msgid "Success, redirecting"
-msgstr "Erfolg, leite weiter"
-
-#: uffd/templates/mfa/auth.html:82 uffd/templates/mfa/setup.html:228
-msgid "Invalid response from device"
-msgstr "Ungültige Antwort von Gerät"
-
-#: uffd/templates/mfa/auth.html:88
-msgid "Authentication timed out, was aborted or not allowed"
-msgstr "Authentifikation abgelaufen, abgebrochen oder nicht erlaubt"
-
-#: uffd/templates/mfa/auth.html:90
-msgid "Device is not registered for your account"
-msgstr "Gerät ist nicht für deinen Account registriert"
-
-#: uffd/templates/mfa/auth.html:92
-msgid "Authentication was aborted"
-msgstr "Authentifikation abgebrochen"
-
-#: uffd/templates/mfa/auth.html:94 uffd/templates/mfa/setup.html:240
-#: uffd/templates/mfa/setup.html:264
-msgid "U2F and FIDO2 devices are not supported by your browser"
-msgstr "U2F- und FIDO2-Geräte werden vom Webbrowser nicht unterstüzt"
-
-#: uffd/templates/mfa/auth.html:97 uffd/templates/mfa/setup.html:243
-msgid "Could not connect to server"
-msgstr "Verbindung zum Server fehlgeschlagen"
-
-#: uffd/templates/mfa/auth.html:103
-msgid "Authentication failed "
-msgstr "Authentifikation fehlgeschlagen"
-
-#: uffd/templates/mfa/auth.html:106
-msgid "Retry authenticate with U2F/FIDO2 device"
-msgstr "Authentifikation mit U2F/FIDO2-Gerät nochmal versuchen"
-
-#: uffd/templates/mfa/disable.html:6
-msgid ""
-"When you proceed, all recovery codes, registered authenticator "
-"applications and devices will be invalidated.\n"
-"\tYou can later generate new recovery codes and setup your applications "
-"and devices again."
-msgstr ""
-"Wenn du fortfährst werden alle Wiederherstellungscodes, registrierte "
-"Authentifikator-Apps und Geräte ungültig gemacht. Du kannst später neue "
-"Wiederherstellungscodes generieren und das Setup der Anwendungen und "
-"Geräte erneut durchführen."
-
-#: uffd/templates/mfa/disable.html:11 uffd/templates/mfa/setup.html:32
-msgid "Disable two-factor authentication"
-msgstr "Zwei-Faktor-Authentifizierung (2FA) deaktivieren"
-
-#: uffd/templates/mfa/setup.html:18 uffd/templates/selfservice/self.html:165
-msgid "Two-factor authentication is currently <strong>enabled</strong>."
-msgstr "Die Zwei-Faktor-Authentifizierung ist derzeit <strong>aktiviert</strong>."
-
-#: uffd/templates/mfa/setup.html:20 uffd/templates/selfservice/self.html:167
-msgid "Two-factor authentication is currently <strong>disabled</strong>."
-msgstr ""
-"Die Zwei-Faktor-Authentifizierung ist derzeit "
-"<strong>deaktiviert</strong>."
-
-#: uffd/templates/mfa/setup.html:23
-msgid ""
-"You need to generate recovery codes and setup at least one authentication"
-" method to enable two-factor authentication."
-msgstr ""
-"Du musst Wiederherstellungscodes generieren und mindestens eine "
-"Authentifizierungsmethode hinzufügen um Zwei-Faktor-Authentifizierung "
-"nutzen zu können."
-
-#: uffd/templates/mfa/setup.html:25
-msgid ""
-"You need to setup at least one authentication method to enable two-factor"
-" authentication."
-msgstr ""
-"Du musst mindestens eine Authentifizierungsmethode hinzufügen um Zwei-"
-"Faktor-Authentifizierung nutzen zu können."
-
-#: uffd/templates/mfa/setup.html:36
-msgid "Reset two-factor configuration"
-msgstr "Zwei-Faktor-Authentifizierung zurücksetzen"
-
-#: uffd/templates/mfa/setup.html:46 uffd/templates/mfa/setup_recovery.html:5
-#: uffd/templates/user/show.html:191
-msgid "Recovery Codes"
-msgstr "Wiederherstellungscodes"
-
-#: uffd/templates/mfa/setup.html:48
-msgid ""
-"Recovery codes allow you to login and setup new two-factor methods when "
-"you lost your registered second factor."
-msgstr ""
-"Wiederherstellungscodes erlauben die Anmeldung und das erneute Hinzufügen"
-" einer Zwei-Faktor-Methode, falls der Zweite Faktor verloren geht."
-
-#: uffd/templates/mfa/setup.html:52
-msgid ""
-"You need to setup recovery codes before you can setup up authenticator "
-"apps or U2F/FIDO2 devices."
-msgstr ""
-"Du musst Wiederherstellungscodes generieren bevor du einen "
-"Authentifikator-App oder ein U2F/FIDO2 Gerät hinzufen kannst."
-
-#: uffd/templates/mfa/setup.html:54
-msgid "Each code can only be used once."
-msgstr "Jeder Code kann nur einmal verwendet werden."
-
-#: uffd/templates/mfa/setup.html:62
-msgid "Generate recovery codes to enable two-factor authentication"
-msgstr ""
-"Generiere Wiederherstellungscodes um die Zwei-Faktor-Authentifizierung zu"
-" aktivieren"
-
-#: uffd/templates/mfa/setup.html:66
-msgid "Generate new recovery codes"
-msgstr "Generiere neue Wiederherstellungscodes"
-
-#: uffd/templates/mfa/setup.html:75
-msgid "You have no remaining recovery codes."
-msgstr "Du hast keine Wiederherstellungscodes übrig."
-
-#: uffd/templates/mfa/setup.html:85 uffd/templates/user/show.html:191
-msgid "Authenticator Apps (TOTP)"
-msgstr "Authentifikator-Apps (TOTP)"
-
-#: uffd/templates/mfa/setup.html:87
-msgid "Use an authenticator application on your mobile device as a second factor."
-msgstr "Nutze eine Authentifikator-App auf deinem Mobilgerät als zweiten Faktor."
-
-#: uffd/templates/mfa/setup.html:90
-msgid ""
-"The authenticator app generates a 6-digit one-time code each time you "
-"login.\n"
-"\t\t\tCompatible apps are freely available for most phones."
-msgstr ""
-"Die Authentifikator-App generiert ein 6-stelliges Einmalpasswort für "
-"jeden Login. Passende Apps sind kostenlos verfügbar für die meisten "
-"Mobilgeräte."
-
-#: uffd/templates/mfa/setup.html:100
-msgid "Setup new app"
-msgstr "Neue App hinzufügen"
-
-#: uffd/templates/mfa/setup.html:108 uffd/templates/mfa/setup.html:170
-msgid "Registered On"
-msgstr "Registriert am"
-
-#: uffd/templates/mfa/setup.html:122
-msgid "No authenticator apps registered yet"
-msgstr "Bisher keine Authentifikator-Apps registriert"
-
-#: uffd/templates/mfa/setup.html:134 uffd/templates/user/show.html:191
-msgid "U2F and FIDO2 Devices"
-msgstr "U2F und FIDO2 Geräte"
-
-#: uffd/templates/mfa/setup.html:136
-msgid "Use an U2F or FIDO2 compatible hardware security key as a second factor."
-msgstr "Nutze einen U2F oder FIDO2 kompatiblen Key als zweiten Faktor."
-
-#: uffd/templates/mfa/setup.html:139
-msgid ""
-"U2F and FIDO2 devices are not supported by all browsers and can be "
-"particularly difficult to use on mobile\n"
-"\t\t\tdevices. <strong>It is strongly recommended to also setup an "
-"authenticator app</strong> to be able to login on all\n"
-"\t\t\tbrowsers."
-msgstr ""
-"U2F und FIDO2 Geräte werden nicht von allen Browsern unterstützt und "
-"können besonders auf mobilen Geräten schwer zu nutzen sein. <strong>Es "
-"wird dringend empfohlen ebenfalls eine Authentifikator-App "
-"hinzuzufügen</strong> um einen Login mit allen Browsern zu ermöglichen."
-
-#: uffd/templates/mfa/setup.html:147
-msgid "U2F/FIDO2 support not enabled"
-msgstr "U2F/FIDO2 Unterstützung nicht aktiviert"
-
-#: uffd/templates/mfa/setup.html:151
-msgid "Enable javascript in your browser to use U2F and FIDO2 devices!"
-msgstr ""
-"Aktiviere Javascript in deinem Browser, um U2F und FIDO2 Geräte nutzen zu"
-" können!"
-
-#: uffd/templates/mfa/setup.html:161
-msgid "Setup new device"
-msgstr "Neues Gerät hinzufügen"
-
-#: uffd/templates/mfa/setup.html:184
-msgid "No U2F/FIDO2 devices registered yet"
-msgstr "Bisher kein U2F/FIDO2 Gerät registriert"
-
-#: uffd/templates/mfa/setup.html:207
-msgid "You need to generate recovery codes first"
-msgstr "Du musst erst Wiederherstellungscodes generieren"
-
-#: uffd/templates/mfa/setup.html:234
-msgid "Registration timed out, was aborted or not allowed"
-msgstr "Registrierung abgelaufen, abgebrochen oder nicht erlaubt"
-
-#: uffd/templates/mfa/setup.html:236
-msgid "Device already registered"
-msgstr "Gerät bereits registriert"
-
-#: uffd/templates/mfa/setup.html:238
-msgid "Registration was aborted"
-msgstr "Registrierung abgebrochen"
-
-#: uffd/templates/mfa/setup.html:249
-msgid "Registration failed"
-msgstr "Registrierung fehlgeschlagen"
-
-#: uffd/templates/mfa/setup.html:252
-msgid "Retry registration"
-msgstr "Registrierung nochmal versuchen"
-
-#: uffd/templates/mfa/setup_recovery.html:8
-msgid ""
-"Recovery codes allow you to login when you lose access to your "
-"authenticator app or U2F/FIDO device. Each code can\n"
-"\tonly be used once."
-msgstr ""
-"Wiederherstellungscodes erlauben den Login, wenn der Zugriff auf die "
-"Authentifikator-App oder das U2F/FIDO2 Gerät verloren geht. Jeder Code "
-"kann nur einmal verwendet werden."
-
-#: uffd/templates/mfa/setup_recovery.html:21
-msgid ""
-"These are your new recovery codes. Make sure to store them in a safe "
-"place or you risk losing access to your\n"
-"\taccount. All previous recovery codes are now invalid."
-msgstr ""
-"Dies sind deine Wiederherstellungscodes. Speichere sie an einem sicheren "
-"Ort, sonst könntest du den Zugriff auf dein Konto verlieren. Alle "
-"vorherigen Wiederherstellungscodes sind nun ungültig."
-
-#: uffd/templates/mfa/setup_recovery.html:26
-#: uffd/templates/session/deviceauth.html:36
-#: uffd/templates/session/devicelogin.html:25
-msgid "Continue"
-msgstr "Weiter"
-
-#: uffd/templates/mfa/setup_recovery.html:28
-msgid "Download codes"
-msgstr "Codes herunterladen"
-
-#: uffd/templates/mfa/setup_recovery.html:30
-msgid "Print codes"
-msgstr "Codes ausdrucken"
-
-#: uffd/templates/mfa/setup_totp.html:6
-msgid ""
-"Install an authenticator application on your mobile device like FreeOTP "
-"or Google Authenticator and scan this QR\n"
-"\tcode. On Apple devices you can use an app called \"Authenticator\"."
-msgstr ""
-"Installiere eine Authentifikator-App auf deinem Mobilgerät wie FreeOTP "
-"oder Google Authenticator and scanne diesen QR Code. Auf Geräten von "
-"Apple kann die App \"Authenticator\" verwendet werden."
-
-#: uffd/templates/mfa/setup_totp.html:18
-msgid ""
-"If you are on your mobile device and cannot scan the code, you can click "
-"on it to open it with your\n"
-"\t\t\tauthenticator app. If that does not work, enter the following "
-"details manually into your authenticator\n"
-"\t\t\tapp:"
-msgstr ""
-"Falls du ein Mobilgerät verwendest und den Code nicht scannen kannst, "
-"kannst du drauf klicken um ihn damit direkt in der Authentifikator-App zu"
-" öffnen. Wenn das nicht funktioniert, gib die folgenden Angaben manuell "
-"in die Authentifikator-App ein:"
-
-#: uffd/templates/mfa/setup_totp.html:23
-msgid "Issuer"
-msgstr "Herausgeber"
-
-#: uffd/templates/mfa/setup_totp.html:24
-msgid "Account"
-msgstr "Konto"
-
-#: uffd/templates/mfa/setup_totp.html:25
-msgid "Secret"
-msgstr "Geheimnis"
-
-#: uffd/templates/mfa/setup_totp.html:26
-msgid "Type"
-msgstr "Typ"
-
-#: uffd/templates/mfa/setup_totp.html:27
-msgid "Digits"
-msgstr "Zeichen"
-
-#: uffd/templates/mfa/setup_totp.html:28
-msgid "Hash algorithm"
-msgstr "Hash-Algorithmus"
-
-#: uffd/templates/mfa/setup_totp.html:29
-msgid "Interval/period"
-msgstr "Intervall/Dauer"
-
-#: uffd/templates/mfa/setup_totp.html:29
-msgid "seconds"
-msgstr "Sekunden"
-
-#: uffd/templates/mfa/setup_totp.html:37
-msgid "Code"
-msgstr "Code"
-
-#: uffd/templates/mfa/setup_totp.html:38
-msgid "Verify and complete setup"
-msgstr "Verifiziere und beende das Setup"
-
 #: uffd/templates/oauth2/logout.html:10
 msgid "Javascript is required for automatic logout"
 msgstr "Für das automatische Abmelden muss Javascript aktiviert sein"
@@ -972,6 +617,23 @@ msgstr "Mitglieder:"
 msgid "Remove"
 msgstr "Entfernen"
 
+#: uffd/templates/selfservice/disable_mfa.html:6
+msgid ""
+"When you proceed, all recovery codes, registered authenticator "
+"applications and devices will be invalidated.\n"
+"\tYou can later generate new recovery codes and setup your applications "
+"and devices again."
+msgstr ""
+"Wenn du fortfährst werden alle Wiederherstellungscodes, registrierte "
+"Authentifikator-Apps und Geräte ungültig gemacht. Du kannst später neue "
+"Wiederherstellungscodes generieren und das Setup der Anwendungen und "
+"Geräte erneut durchführen."
+
+#: uffd/templates/selfservice/disable_mfa.html:11
+#: uffd/templates/selfservice/setup_mfa.html:32
+msgid "Disable two-factor authentication"
+msgstr "Zwei-Faktor-Authentifizierung (2FA) deaktivieren"
+
 #: uffd/templates/selfservice/forgot_password.html:6
 msgid "Forgot password"
 msgstr "Passwort vergessen"
@@ -1058,7 +720,7 @@ msgstr "primär"
 msgid "unverified"
 msgstr "nicht bestätigt"
 
-#: uffd/templates/selfservice/self.html:62 uffd/views/selfservice.py:175
+#: uffd/templates/selfservice/self.html:62 uffd/views/selfservice.py:180
 msgid "Cannot delete primary e-mail address"
 msgstr "Primäre E-Mail-Adresse kann nicht gelöscht werden"
 
@@ -1147,6 +809,11 @@ msgstr "Passwort wiederholen"
 msgid "Change Password"
 msgstr "Passwort ändern"
 
+#: uffd/templates/selfservice/self.html:159
+#: uffd/templates/session/mfa_auth.html:13 uffd/templates/user/show.html:188
+msgid "Two-Factor Authentication"
+msgstr "Zwei-Faktor-Authentifizierung"
+
 #: uffd/templates/selfservice/self.html:160
 msgid ""
 "Setting up Two-Factor Authentication (2FA) adds an additional step to the"
@@ -1156,6 +823,18 @@ msgstr ""
 "Zwei-Faktor-Authentifizierung (2FA) fügt einen zusätzlichen Schritt zur "
 "Anmeldung im Single-Sign-On hinzu und verbessert damit die Sicherheit "
 "deines Accounts erheblich."
+
+#: uffd/templates/selfservice/self.html:165
+#: uffd/templates/selfservice/setup_mfa.html:18
+msgid "Two-factor authentication is currently <strong>enabled</strong>."
+msgstr "Die Zwei-Faktor-Authentifizierung ist derzeit <strong>aktiviert</strong>."
+
+#: uffd/templates/selfservice/self.html:167
+#: uffd/templates/selfservice/setup_mfa.html:20
+msgid "Two-factor authentication is currently <strong>disabled</strong>."
+msgstr ""
+"Die Zwei-Faktor-Authentifizierung ist derzeit "
+"<strong>deaktiviert</strong>."
 
 #: uffd/templates/selfservice/self.html:170
 msgid "Manage two-factor authentication"
@@ -1248,6 +927,291 @@ msgstr "Passwort zurücksetzen"
 #: uffd/templates/selfservice/set_password.html:20
 msgid "Set password"
 msgstr "Passwort setzen"
+
+#: uffd/templates/selfservice/setup_mfa.html:23
+msgid ""
+"You need to generate recovery codes and setup at least one authentication"
+" method to enable two-factor authentication."
+msgstr ""
+"Du musst Wiederherstellungscodes generieren und mindestens eine "
+"Authentifizierungsmethode hinzufügen um Zwei-Faktor-Authentifizierung "
+"nutzen zu können."
+
+#: uffd/templates/selfservice/setup_mfa.html:25
+msgid ""
+"You need to setup at least one authentication method to enable two-factor"
+" authentication."
+msgstr ""
+"Du musst mindestens eine Authentifizierungsmethode hinzufügen um Zwei-"
+"Faktor-Authentifizierung nutzen zu können."
+
+#: uffd/templates/selfservice/setup_mfa.html:36
+msgid "Reset two-factor configuration"
+msgstr "Zwei-Faktor-Authentifizierung zurücksetzen"
+
+#: uffd/templates/selfservice/setup_mfa.html:46
+#: uffd/templates/selfservice/setup_mfa_recovery.html:5
+#: uffd/templates/user/show.html:191
+msgid "Recovery Codes"
+msgstr "Wiederherstellungscodes"
+
+#: uffd/templates/selfservice/setup_mfa.html:48
+msgid ""
+"Recovery codes allow you to login and setup new two-factor methods when "
+"you lost your registered second factor."
+msgstr ""
+"Wiederherstellungscodes erlauben die Anmeldung und das erneute Hinzufügen"
+" einer Zwei-Faktor-Methode, falls der Zweite Faktor verloren geht."
+
+#: uffd/templates/selfservice/setup_mfa.html:52
+msgid ""
+"You need to setup recovery codes before you can setup up authenticator "
+"apps or U2F/FIDO2 devices."
+msgstr ""
+"Du musst Wiederherstellungscodes generieren bevor du einen "
+"Authentifikator-App oder ein U2F/FIDO2 Gerät hinzufen kannst."
+
+#: uffd/templates/selfservice/setup_mfa.html:54
+msgid "Each code can only be used once."
+msgstr "Jeder Code kann nur einmal verwendet werden."
+
+#: uffd/templates/selfservice/setup_mfa.html:62
+msgid "Generate recovery codes to enable two-factor authentication"
+msgstr ""
+"Generiere Wiederherstellungscodes um die Zwei-Faktor-Authentifizierung zu"
+" aktivieren"
+
+#: uffd/templates/selfservice/setup_mfa.html:66
+msgid "Generate new recovery codes"
+msgstr "Generiere neue Wiederherstellungscodes"
+
+#: uffd/templates/selfservice/setup_mfa.html:75
+msgid "You have no remaining recovery codes."
+msgstr "Du hast keine Wiederherstellungscodes übrig."
+
+#: uffd/templates/selfservice/setup_mfa.html:85
+#: uffd/templates/user/show.html:191
+msgid "Authenticator Apps (TOTP)"
+msgstr "Authentifikator-Apps (TOTP)"
+
+#: uffd/templates/selfservice/setup_mfa.html:87
+msgid "Use an authenticator application on your mobile device as a second factor."
+msgstr "Nutze eine Authentifikator-App auf deinem Mobilgerät als zweiten Faktor."
+
+#: uffd/templates/selfservice/setup_mfa.html:90
+msgid ""
+"The authenticator app generates a 6-digit one-time code each time you "
+"login.\n"
+"\t\t\tCompatible apps are freely available for most phones."
+msgstr ""
+"Die Authentifikator-App generiert ein 6-stelliges Einmalpasswort für "
+"jeden Login. Passende Apps sind kostenlos verfügbar für die meisten "
+"Mobilgeräte."
+
+#: uffd/templates/selfservice/setup_mfa.html:100
+msgid "Setup new app"
+msgstr "Neue App hinzufügen"
+
+#: uffd/templates/selfservice/setup_mfa.html:108
+#: uffd/templates/selfservice/setup_mfa.html:170
+msgid "Registered On"
+msgstr "Registriert am"
+
+#: uffd/templates/selfservice/setup_mfa.html:122
+msgid "No authenticator apps registered yet"
+msgstr "Bisher keine Authentifikator-Apps registriert"
+
+#: uffd/templates/selfservice/setup_mfa.html:134
+#: uffd/templates/user/show.html:191
+msgid "U2F and FIDO2 Devices"
+msgstr "U2F und FIDO2 Geräte"
+
+#: uffd/templates/selfservice/setup_mfa.html:136
+msgid "Use an U2F or FIDO2 compatible hardware security key as a second factor."
+msgstr "Nutze einen U2F oder FIDO2 kompatiblen Key als zweiten Faktor."
+
+#: uffd/templates/selfservice/setup_mfa.html:139
+msgid ""
+"U2F and FIDO2 devices are not supported by all browsers and can be "
+"particularly difficult to use on mobile\n"
+"\t\t\tdevices. <strong>It is strongly recommended to also setup an "
+"authenticator app</strong> to be able to login on all\n"
+"\t\t\tbrowsers."
+msgstr ""
+"U2F und FIDO2 Geräte werden nicht von allen Browsern unterstützt und "
+"können besonders auf mobilen Geräten schwer zu nutzen sein. <strong>Es "
+"wird dringend empfohlen ebenfalls eine Authentifikator-App "
+"hinzuzufügen</strong> um einen Login mit allen Browsern zu ermöglichen."
+
+#: uffd/templates/selfservice/setup_mfa.html:147
+msgid "U2F/FIDO2 support not enabled"
+msgstr "U2F/FIDO2 Unterstützung nicht aktiviert"
+
+#: uffd/templates/selfservice/setup_mfa.html:151
+msgid "Enable javascript in your browser to use U2F and FIDO2 devices!"
+msgstr ""
+"Aktiviere Javascript in deinem Browser, um U2F und FIDO2 Geräte nutzen zu"
+" können!"
+
+#: uffd/templates/selfservice/setup_mfa.html:161
+msgid "Setup new device"
+msgstr "Neues Gerät hinzufügen"
+
+#: uffd/templates/selfservice/setup_mfa.html:184
+msgid "No U2F/FIDO2 devices registered yet"
+msgstr "Bisher kein U2F/FIDO2 Gerät registriert"
+
+#: uffd/templates/selfservice/setup_mfa.html:199
+#: uffd/templates/session/mfa_auth.html:51
+msgid "Contacting server"
+msgstr "Verbinde mit Server"
+
+#: uffd/templates/selfservice/setup_mfa.html:207
+msgid "You need to generate recovery codes first"
+msgstr "Du musst erst Wiederherstellungscodes generieren"
+
+#: uffd/templates/selfservice/setup_mfa.html:208
+#: uffd/templates/session/mfa_auth.html:68
+msgid "Server error"
+msgstr "Serverfehler"
+
+#: uffd/templates/selfservice/setup_mfa.html:210
+#: uffd/templates/session/mfa_auth.html:71
+msgid "Waiting for device"
+msgstr "Warte auf Gerät"
+
+#: uffd/templates/selfservice/setup_mfa.html:228
+#: uffd/templates/session/mfa_auth.html:95
+msgid "Invalid response from device"
+msgstr "Ungültige Antwort von Gerät"
+
+#: uffd/templates/selfservice/setup_mfa.html:234
+msgid "Registration timed out, was aborted or not allowed"
+msgstr "Registrierung abgelaufen, abgebrochen oder nicht erlaubt"
+
+#: uffd/templates/selfservice/setup_mfa.html:236
+msgid "Device already registered"
+msgstr "Gerät bereits registriert"
+
+#: uffd/templates/selfservice/setup_mfa.html:238
+msgid "Registration was aborted"
+msgstr "Registrierung abgebrochen"
+
+#: uffd/templates/selfservice/setup_mfa.html:240
+#: uffd/templates/selfservice/setup_mfa.html:264
+#: uffd/templates/session/mfa_auth.html:107
+msgid "U2F and FIDO2 devices are not supported by your browser"
+msgstr "U2F- und FIDO2-Geräte werden vom Webbrowser nicht unterstüzt"
+
+#: uffd/templates/selfservice/setup_mfa.html:243
+#: uffd/templates/session/mfa_auth.html:110
+msgid "Could not connect to server"
+msgstr "Verbindung zum Server fehlgeschlagen"
+
+#: uffd/templates/selfservice/setup_mfa.html:249
+msgid "Registration failed"
+msgstr "Registrierung fehlgeschlagen"
+
+#: uffd/templates/selfservice/setup_mfa.html:252
+msgid "Retry registration"
+msgstr "Registrierung nochmal versuchen"
+
+#: uffd/templates/selfservice/setup_mfa_recovery.html:8
+msgid ""
+"Recovery codes allow you to login when you lose access to your "
+"authenticator app or U2F/FIDO device. Each code can\n"
+"\tonly be used once."
+msgstr ""
+"Wiederherstellungscodes erlauben den Login, wenn der Zugriff auf die "
+"Authentifikator-App oder das U2F/FIDO2 Gerät verloren geht. Jeder Code "
+"kann nur einmal verwendet werden."
+
+#: uffd/templates/selfservice/setup_mfa_recovery.html:21
+msgid ""
+"These are your new recovery codes. Make sure to store them in a safe "
+"place or you risk losing access to your\n"
+"\taccount. All previous recovery codes are now invalid."
+msgstr ""
+"Dies sind deine Wiederherstellungscodes. Speichere sie an einem sicheren "
+"Ort, sonst könntest du den Zugriff auf dein Konto verlieren. Alle "
+"vorherigen Wiederherstellungscodes sind nun ungültig."
+
+#: uffd/templates/selfservice/setup_mfa_recovery.html:26
+#: uffd/templates/session/deviceauth.html:36
+#: uffd/templates/session/devicelogin.html:25
+msgid "Continue"
+msgstr "Weiter"
+
+#: uffd/templates/selfservice/setup_mfa_recovery.html:28
+msgid "Download codes"
+msgstr "Codes herunterladen"
+
+#: uffd/templates/selfservice/setup_mfa_recovery.html:30
+msgid "Print codes"
+msgstr "Codes ausdrucken"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:6
+msgid ""
+"Install an authenticator application on your mobile device like FreeOTP "
+"or Google Authenticator and scan this QR\n"
+"\tcode. On Apple devices you can use an app called \"Authenticator\"."
+msgstr ""
+"Installiere eine Authentifikator-App auf deinem Mobilgerät wie FreeOTP "
+"oder Google Authenticator and scanne diesen QR Code. Auf Geräten von "
+"Apple kann die App \"Authenticator\" verwendet werden."
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:18
+msgid ""
+"If you are on your mobile device and cannot scan the code, you can click "
+"on it to open it with your\n"
+"\t\t\tauthenticator app. If that does not work, enter the following "
+"details manually into your authenticator\n"
+"\t\t\tapp:"
+msgstr ""
+"Falls du ein Mobilgerät verwendest und den Code nicht scannen kannst, "
+"kannst du drauf klicken um ihn damit direkt in der Authentifikator-App zu"
+" öffnen. Wenn das nicht funktioniert, gib die folgenden Angaben manuell "
+"in die Authentifikator-App ein:"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:23
+msgid "Issuer"
+msgstr "Herausgeber"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:24
+msgid "Account"
+msgstr "Konto"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:25
+msgid "Secret"
+msgstr "Geheimnis"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:26
+msgid "Type"
+msgstr "Typ"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:27
+msgid "Digits"
+msgstr "Zeichen"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:28
+msgid "Hash algorithm"
+msgstr "Hash-Algorithmus"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:29
+msgid "Interval/period"
+msgstr "Intervall/Dauer"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:29
+msgid "seconds"
+msgstr "Sekunden"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:37
+msgid "Code"
+msgstr "Code"
+
+#: uffd/templates/selfservice/setup_mfa_totp.html:38
+msgid "Verify and complete setup"
+msgstr "Verifiziere und beende das Setup"
 
 #: uffd/templates/service/api.html:20
 msgid "Authentication Username"
@@ -1492,6 +1456,69 @@ msgstr "Registrieren"
 #: uffd/templates/session/login.html:32
 msgid "Forgot Password?"
 msgstr "Passwort vergessen?"
+
+#: uffd/templates/session/mfa_auth.html:19
+msgid "Enable javascript for authentication with U2F/FIDO2 devices"
+msgstr "Aktiviere Javascript zur Authentifizierung mit U2F/FIDO2 Geräten"
+
+#: uffd/templates/session/mfa_auth.html:23
+msgid "Authentication with U2F/FIDO2 devices is not supported by your browser"
+msgstr ""
+"Authentifizierung mit U2F/FIDO2 Geräten wird von deinem Browser nicht "
+"unterstützt"
+
+#: uffd/templates/session/mfa_auth.html:29
+msgid "Authenticate with U2F/FIDO2 device"
+msgstr "Authentifiziere dich mit einem U2F/FIDO2-Gerät"
+
+#: uffd/templates/session/mfa_auth.html:32
+msgid "or"
+msgstr "oder"
+
+#: uffd/templates/session/mfa_auth.html:35
+msgid "Code from your authenticator app or recovery code"
+msgstr "Code aus deiner Authentifikator-App oder Wiederherstellungscode"
+
+#: uffd/templates/session/mfa_auth.html:38
+msgid "Verify"
+msgstr "Verifizieren"
+
+#: uffd/templates/session/mfa_auth.html:64
+#: uffd/templates/session/mfa_auth.html:93
+msgid "Session timed out"
+msgstr "Sitzung abgelaufen"
+
+#: uffd/templates/session/mfa_auth.html:66
+msgid "You have not registered any U2F/FIDO2 devices for your account"
+msgstr "Es sind keine U2F/FIDO2-Geräte für deinen Account registriert"
+
+#: uffd/templates/session/mfa_auth.html:74
+msgid "Verifing response"
+msgstr "Überprüfe Antwort"
+
+#: uffd/templates/session/mfa_auth.html:89
+msgid "Success, redirecting"
+msgstr "Erfolg, leite weiter"
+
+#: uffd/templates/session/mfa_auth.html:101
+msgid "Authentication timed out, was aborted or not allowed"
+msgstr "Authentifikation abgelaufen, abgebrochen oder nicht erlaubt"
+
+#: uffd/templates/session/mfa_auth.html:103
+msgid "Device is not registered for your account"
+msgstr "Gerät ist nicht für deinen Account registriert"
+
+#: uffd/templates/session/mfa_auth.html:105
+msgid "Authentication was aborted"
+msgstr "Authentifikation abgebrochen"
+
+#: uffd/templates/session/mfa_auth.html:116
+msgid "Authentication failed "
+msgstr "Authentifikation fehlgeschlagen"
+
+#: uffd/templates/session/mfa_auth.html:119
+msgid "Retry authenticate with U2F/FIDO2 device"
+msgstr "Authentifikation mit U2F/FIDO2-Gerät nochmal versuchen"
 
 #: uffd/templates/signup/confirm.html:6
 msgid "Complete Registration"
@@ -1787,7 +1814,7 @@ msgstr "Rollen erfolgreich geändert"
 msgid "Invite link does not allow signup"
 msgstr "Einladungslink erlaubt keine Account-Registrierung"
 
-#: uffd/views/invite.py:175 uffd/views/selfservice.py:44
+#: uffd/views/invite.py:175 uffd/views/selfservice.py:49
 #: uffd/views/signup.py:47
 msgid "Passwords do not match"
 msgstr "Die Passwörter stimmen nicht überein"
@@ -1825,50 +1852,8 @@ msgstr "Mailweiterleitung geändert."
 msgid "Deleted mail mapping."
 msgstr "Mailweiterleitung gelöscht."
 
-#: uffd/views/mfa.py:49
-msgid "Two-factor authentication was reset"
-msgstr "Zwei-Faktor-Authentifizierung wurde zurückgesetzt"
-
-#: uffd/views/mfa.py:78
-msgid "Generate recovery codes first!"
-msgstr "Generiere zuerst die Wiederherstellungscodes!"
-
-#: uffd/views/mfa.py:86
-msgid "Code is invalid"
-msgstr "Wiederherstellungscode ist ungültig"
-
-#: uffd/views/mfa.py:105
-#, python-format
-msgid ""
-"2FA WebAuthn support disabled because import of the fido2 module failed "
-"(%s)"
-msgstr ""
-"2FA WebAuthn Unterstützung deaktiviert, da das fido2 Modul nicht geladen "
-"werden konnte (%s)"
-
-#: uffd/views/mfa.py:216
-#, python-format
-msgid "We received too many invalid attempts! Please wait at least %s."
-msgstr "Wir haben zu viele fehlgeschlagene Versuche! Bitte warte mindestens %s."
-
-#: uffd/views/mfa.py:231
-msgid "You have exhausted your recovery codes. Please generate new ones now!"
-msgstr "Du hast keine Wiederherstellungscode mehr. Bitte generiere diese jetzt!"
-
-#: uffd/views/mfa.py:234
-msgid ""
-"You only have a few recovery codes remaining. Make sure to generate new "
-"ones before they run out."
-msgstr ""
-"Du hast nur noch wenige Wiederherstellungscodes übrig. Bitte generiere "
-"diese erneut bevor keine mehr übrig sind."
-
-#: uffd/views/mfa.py:238
-msgid "Two-factor authentication failed"
-msgstr "Zwei-Faktor-Authentifizierung fehlgeschlagen"
-
-#: uffd/views/oauth2.py:267 uffd/views/selfservice.py:66
-#: uffd/views/session.py:86
+#: uffd/views/oauth2.py:267 uffd/views/selfservice.py:71
+#: uffd/views/session.py:121
 #, python-format
 msgid ""
 "We received too many requests from your ip address/network! Please wait "
@@ -1914,23 +1899,23 @@ msgstr "Beschreibung zu lang"
 msgid "Member removed"
 msgstr "Mitglied entfernt"
 
-#: uffd/views/selfservice.py:22
+#: uffd/views/selfservice.py:27
 msgid "Selfservice"
 msgstr "Selfservice"
 
-#: uffd/views/selfservice.py:33
+#: uffd/views/selfservice.py:38
 msgid "Display name changed."
 msgstr "Anzeigename geändert."
 
-#: uffd/views/selfservice.py:35
+#: uffd/views/selfservice.py:40
 msgid "Display name is not valid."
 msgstr "Anzeigename ist nicht valide."
 
-#: uffd/views/selfservice.py:47
+#: uffd/views/selfservice.py:52
 msgid "Password changed"
 msgstr "Passwort geändert"
 
-#: uffd/views/selfservice.py:64
+#: uffd/views/selfservice.py:69
 #, python-format
 msgid ""
 "We received too many password reset requests for this user! Please wait "
@@ -1939,7 +1924,7 @@ msgstr ""
 "Wir haben zu viele fehlgeschlagene Anmeldeversuche für diesen Account! "
 "Bitte warte mindestens %(delay)s."
 
-#: uffd/views/selfservice.py:70
+#: uffd/views/selfservice.py:75
 msgid ""
 "We sent a mail to this user's mail address if you entered the correct "
 "mail and login name combination"
@@ -1947,42 +1932,42 @@ msgstr ""
 "Falls E-Mail-Adresse und Anmeldename richtig waren, wurde eine E-Mail an "
 "die Adresse gesendet."
 
-#: uffd/views/selfservice.py:87 uffd/views/selfservice.py:138
-#: uffd/views/selfservice.py:143
+#: uffd/views/selfservice.py:92 uffd/views/selfservice.py:143
+#: uffd/views/selfservice.py:148
 msgid "Link invalid or expired"
 msgstr "Link ist ungültig oder abgelaufen"
 
-#: uffd/views/selfservice.py:92
+#: uffd/views/selfservice.py:97
 msgid "You need to set a password, please try again."
 msgstr "Password fehlt, bitte versuche es erneut."
 
-#: uffd/views/selfservice.py:95
+#: uffd/views/selfservice.py:100
 msgid "Passwords do not match, please try again."
 msgstr "Die Passwörter stimmen nicht überein, bitte versuche es erneut"
 
-#: uffd/views/selfservice.py:100
+#: uffd/views/selfservice.py:105
 msgid "Password ist not valid, please try again."
 msgstr "Ungültiges Passwort, bitte versuche es erneut"
 
-#: uffd/views/selfservice.py:104
+#: uffd/views/selfservice.py:109
 msgid "New password set"
 msgstr "Passwort geändert"
 
-#: uffd/views/selfservice.py:117
+#: uffd/views/selfservice.py:122
 msgid "E-Mail address already exists"
 msgstr "E-Mail-Adresse existiert bereits"
 
-#: uffd/views/selfservice.py:124 uffd/views/selfservice.py:162
-#: uffd/views/selfservice.py:237
+#: uffd/views/selfservice.py:129 uffd/views/selfservice.py:167
+#: uffd/views/selfservice.py:242
 #, python-format
 msgid "E-Mail to \"%(mail_address)s\" could not be sent!"
 msgstr "E-Mail an \"%(mail_address)s\" konnte nicht gesendet werden!"
 
-#: uffd/views/selfservice.py:126 uffd/views/selfservice.py:164
+#: uffd/views/selfservice.py:131 uffd/views/selfservice.py:169
 msgid "We sent you an email, please verify your mail address."
 msgstr "Wir haben dir eine E-Mail gesendet, bitte prüfe deine E-Mail-Adresse."
 
-#: uffd/views/selfservice.py:141
+#: uffd/views/selfservice.py:146
 msgid ""
 "This link was generated for another user. Login as the correct user to "
 "continue."
@@ -1990,36 +1975,44 @@ msgstr ""
 "Dieser Link wurde für einen anderen Account erstellt. Melde dich mit dem "
 "richtigen Account an um Fortzufahren."
 
-#: uffd/views/selfservice.py:150
+#: uffd/views/selfservice.py:155
 msgid "E-Mail address is already used by another account"
 msgstr "E-Mail-Adresse wird bereits von einem anderen Account verwendet"
 
-#: uffd/views/selfservice.py:152
+#: uffd/views/selfservice.py:157
 msgid "E-Mail address verified"
 msgstr "E-Mail-Adresse verifiziert"
 
-#: uffd/views/selfservice.py:177
+#: uffd/views/selfservice.py:182
 msgid "E-Mail address deleted"
 msgstr "E-Mail-Adresse gelöscht"
 
-#: uffd/views/selfservice.py:198
+#: uffd/views/selfservice.py:203
 msgid "E-Mail preferences updated"
 msgstr "E-Mail-Einstellungen geändert"
 
-#: uffd/views/selfservice.py:208
+#: uffd/views/selfservice.py:213
 msgid "Session revoked"
 msgstr "Sitzung widerrufen"
 
-#: uffd/views/selfservice.py:219
+#: uffd/views/selfservice.py:224
 #, python-format
 msgid "You left role %(role_name)s"
 msgstr "Rolle %(role_name)s verlassen"
+
+#: uffd/views/selfservice.py:290
+msgid "Generate recovery codes first!"
+msgstr "Generiere zuerst die Wiederherstellungscodes!"
+
+#: uffd/views/selfservice.py:298
+msgid "Code is invalid"
+msgstr "Code ist ungültig"
 
 #: uffd/views/service.py:34
 msgid "Services"
 msgstr "Dienste"
 
-#: uffd/views/session.py:84
+#: uffd/views/session.py:119
 #, python-format
 msgid ""
 "We received too many invalid login attempts for this user! Please wait at"
@@ -2028,34 +2021,55 @@ msgstr ""
 "Wir haben zu viele fehlgeschlagene Anmeldeversuche für diesen Account "
 "erhalten! Bitte warte mindestens %(delay)s."
 
-#: uffd/views/session.py:93
+#: uffd/views/session.py:128
 msgid "Login name or password is wrong"
 msgstr "Der Anmeldename oder das Passwort ist falsch"
 
-#: uffd/views/session.py:96
+#: uffd/views/session.py:131
 #, python-format
 msgid "Your account is deactivated. Contact %(contact_email)s for details."
 msgstr ""
 "Dein Account ist deaktiviert. Kontaktiere %(contact_email)s für weitere "
 "Informationen."
 
-#: uffd/views/session.py:102
+#: uffd/views/session.py:137
 msgid "You do not have access to this service"
 msgstr "Du hast keinen Zugriff auf diesen Service"
 
-#: uffd/views/session.py:114 uffd/views/session.py:125
+#: uffd/views/session.py:151
 msgid "You need to login first"
 msgstr "Du musst dich erst anmelden"
 
-#: uffd/views/session.py:146 uffd/views/session.py:156
+#: uffd/views/session.py:170
+#, python-format
+msgid "We received too many invalid attempts! Please wait at least %s."
+msgstr "Wir haben zu viele fehlgeschlagene Versuche! Bitte warte mindestens %s."
+
+#: uffd/views/session.py:184
+msgid "You have exhausted your recovery codes. Please generate new ones now!"
+msgstr "Du hast keine Wiederherstellungscode mehr. Bitte generiere diese jetzt!"
+
+#: uffd/views/session.py:187
+msgid ""
+"You only have a few recovery codes remaining. Make sure to generate new "
+"ones before they run out."
+msgstr ""
+"Du hast nur noch wenige Wiederherstellungscodes übrig. Bitte generiere "
+"diese erneut bevor keine mehr übrig sind."
+
+#: uffd/views/session.py:192
+msgid "Two-factor authentication failed"
+msgstr "Zwei-Faktor-Authentifizierung fehlgeschlagen"
+
+#: uffd/views/session.py:248 uffd/views/session.py:258
 msgid "Initiation code is no longer valid"
 msgstr "Startcode ist nicht mehr gültig"
 
-#: uffd/views/session.py:160
+#: uffd/views/session.py:262
 msgid "Invalid confirmation code"
 msgstr "Ungültiger Bestätigungscode"
 
-#: uffd/views/session.py:172 uffd/views/session.py:183
+#: uffd/views/session.py:274 uffd/views/session.py:285
 msgid "Invalid initiation code"
 msgstr "Ungültiger Startcode"
 
@@ -2120,11 +2134,15 @@ msgstr "Account deaktiviert"
 msgid "User activated"
 msgstr "Account aktiviert"
 
-#: uffd/views/user.py:173
+#: uffd/views/user.py:174
+msgid "Two-factor authentication was reset"
+msgstr "Zwei-Faktor-Authentifizierung wurde zurückgesetzt"
+
+#: uffd/views/user.py:183
 msgid "Sessions revoked"
 msgstr "Sitzungen widerrufen"
 
-#: uffd/views/user.py:183
+#: uffd/views/user.py:193
 msgid "Deleted user"
 msgstr "Account gelöscht"
 
