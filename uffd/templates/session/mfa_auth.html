@@ -1,11 +1,19 @@
 {% extends 'base_narrow.html' %}
 
+{% block head %}
+{{ super() }}
+		{% if config.MFA_AUTH_TIMEOUT_SECONDS >= 60 %}
+		<meta http-equiv="Refresh" content="{{ [0, login_state.timeout|int - 20]|max }}; url={{ url_for("session.login", ref=ref) }}"/>
+		{% endif %}
+{% endblock %}
+
 {% block body %}
 <form action="{{ url_for("session.mfa_auth_finish", ref=ref) }}" method="POST" autocomplete="off">
 	<div class="col-12 mb-3">
 		<h2 class="text-center">{{_("Two-Factor Authentication")}}</h2>
 	</div>
-	{% if request.user_pre_mfa.mfa_webauthn_methods %}
+	<input type="hidden" name="login_state" value="{{ login_state.value }}">
+	{% if login_state.user.mfa_webauthn_methods %}
 	<noscript>
 		<div class="form-group col-12">
 			<div id="webauthn-nojs" class="alert alert-warning" role="alert">{{_("Enable javascript for authentication with U2F/FIDO2 devices")}}</div>
@@ -30,11 +38,11 @@
 		<button type="submit" class="btn btn-primary btn-block">{{_("Verify")}}</button>
 	</div>
 	<div class="form-group col-12">
-		<a href="{{ url_for("session.logout") }}" class="btn btn-secondary btn-block">{{_("Cancel")}}</a>
+		<a href="{{ url_for("session.login", ref=ref) }}" class="btn btn-secondary btn-block">{{_("Cancel")}}</a>
 	</div>
 </form>
 
-{% if webauthn_supported and request.user_pre_mfa.mfa_webauthn_methods %}
+{% if webauthn_supported and login_state.user.mfa_webauthn_methods %}
 <script src="{{ url_for('static', filename="cbor.js") }}"></script>
 <script>
 function begin_webauthn() {
@@ -44,11 +52,15 @@ function begin_webauthn() {
 	$('#webauthn-btn').prop('disabled', true);
 	fetch({{ url_for('session.mfa_auth_webauthn_begin')|tojson }}, {
 		method: 'POST',
+		headers: {'Content-Type': 'application/cbor'},
+		body: CBOR.encode({
+			"loginState": {{ login_state.value|tojson }},
+		})
 	}).then(function(response) {
 		if (response.ok) {
 			return response.arrayBuffer();
 		} else if (response.status == 403) {
-			window.location = {{ request.url|tojson }}; /* reload */
+			window.location = {{ url_for("session.login", ref=ref)|tojson }};
 			throw new Error({{ _('Session timed out')|tojson }});
 		} else if (response.status == 404) {
 			throw new Error({{ _('You have not registered any U2F/FIDO2 devices for your account')|tojson }});
@@ -64,6 +76,7 @@ function begin_webauthn() {
 			method: 'POST',
 			headers: {'Content-Type': 'application/cbor'},
 			body: CBOR.encode({
+				"loginState": {{ login_state.value|tojson }},
 				"credentialId": new Uint8Array(assertion.rawId),
 				"authenticatorData": new Uint8Array(assertion.response.authenticatorData),
 				"clientDataJSON": new Uint8Array(assertion.response.clientDataJSON),
@@ -76,7 +89,7 @@ function begin_webauthn() {
 			$('#webauthn-btn-text').text({{ _('Success, redirecting')|tojson }});
 			window.location = {{ (ref or url_for('index'))|tojson }};
 		} else if (response.status == 403) {
-			window.location = {{ request.url|tojson }}; /* reload */
+			window.location = {{ url_for("session.login", ref=ref)|tojson }};
 			throw new Error({{ _('Session timed out')|tojson }});
 		} else {
 			throw new Error({{ _('Invalid response from device')|tojson }});

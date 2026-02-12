@@ -109,6 +109,6 @@ def signup_confirm_submit(signup_id, token):
 		flash(msg, 'error')
 		return render_template('signup/confirm.html', signup=signup)
 	db.session.commit()
-	set_session(user, skip_mfa=True)
+	set_session(user)
 	flash(_('Your account was successfully created'))
 	return redirect(url_for('index'))

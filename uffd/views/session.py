@@ -4,6 +4,7 @@ import functools
 
 from flask import Blueprint, render_template, request, url_for, redirect, flash, current_app, session, abort
 from flask_babel import gettext as _
+import itsdangerous
 
 from uffd.database import db
 from uffd.csrf import csrf_protect
@@ -19,9 +20,7 @@ mfa_ratelimit = Ratelimit('mfa', 1*60, 3)
 @bp.before_app_request
 def set_request_user():
 	request.user = None
-	request.user_pre_mfa = None
 	request.session = None
-	request.session_pre_mfa = None
 	if 'id' not in session:
 		return
 	if 'secret' not in session:
@@ -36,24 +35,21 @@ def set_request_user():
 		db.session.commit()
 	if _session.user.is_deactivated or not _session.user.is_in_group(current_app.config['ACL_ACCESS_GROUP']):
 		return
-	request.session_pre_mfa = _session
-	request.user_pre_mfa = _session.user
-	if _session.mfa_done:
-		request.session = _session
-		request.user = _session.user
+	request.session = _session
+	request.user = _session.user
 
 @bp.route("/logout")
 def logout():
 	# The oauth2 module takes data from `session` and injects it into the url,
 	# so we need to build the url BEFORE we clear the session!
 	resp = redirect(url_for('oauth2.logout', ref=request.values.get('ref', url_for('.login'))))
-	if request.session_pre_mfa:
-		db.session.delete(request.session_pre_mfa)
+	if request.session:
+		db.session.delete(request.session)
 		db.session.commit()
 	session.clear()
 	return resp
 
-def set_session(user, skip_mfa=False):
+def set_session(user):
 	session.clear()
 	session.permanent = True
 	secret = secrets.token_hex(128)
@@ -63,24 +59,59 @@ def set_session(user, skip_mfa=False):
 		ip_address=request.remote_addr,
 		user_agent=request.user_agent.string,
 	)
-	if skip_mfa:
-		_session.mfa_done = True
 	db.session.add(_session)
 	db.session.commit()
 	session['id'] = _session.id
 	session['secret'] = secret
 	session['_csrf_token'] = secrets.token_hex(128)
+	set_request_user()
+
+class LoginState:
+	def __init__(self, user, value=None, timeout=None):
+		self.user = user
+		if value is None:
+			value = self.get_serializer().dumps({
+				'user_id': user.id
+			})
+		self.value = value
+		if timeout is None:
+			timeout = current_app.config['MFA_AUTH_TIMEOUT_SECONDS']
+		self.timeout = timeout
+
+	@classmethod
+	def get_serializer(cls):
+		return itsdangerous.URLSafeTimedSerializer(current_app.secret_key, salt='login_state')
+
+	@classmethod
+	def from_value(cls, value):
+		try:
+			data, timestamp = cls.get_serializer().loads(
+				value,
+				max_age=current_app.config['MFA_AUTH_TIMEOUT_SECONDS'],
+				return_timestamp=True
+			)
+		except itsdangerous.SignatureExpired:
+			return None
+		user = User.query.get(data['user_id'])
+		if user is None:
+			return None
+		# Compatibility with itsdangerous<2.0.0 (Buster/Bullseye)
+		timestamp = timestamp.replace(tzinfo=datetime.timezone.utc)
+		age = datetime.datetime.now(tz=datetime.timezone.utc) - timestamp
+		timeout = max(0, current_app.config['MFA_AUTH_TIMEOUT_SECONDS'] - age.total_seconds())
+		return cls(user, value=value, timeout=timeout)
 
 @bp.route("/login", methods=('GET', 'POST'))
 def login():
 	# pylint: disable=too-many-return-statements
-	if request.user_pre_mfa:
-		return redirect(url_for('session.mfa_auth', ref=request.values.get('ref', url_for('index'))))
+	if request.user:
+		return secure_local_redirect(request.values.get('ref', url_for('index')))
 	if request.method == 'GET':
 		return render_template('session/login.html', ref=request.values.get('ref'))
 
 	username = request.form['loginname'].lower()
 	password = request.form['password']
+
 	login_delay = login_ratelimit.get_delay(username)
 	host_delay = host_ratelimit.get_delay()
 	if login_delay or host_delay:
@@ -105,104 +136,93 @@ def login():
 	if not user.is_in_group(current_app.config['ACL_ACCESS_GROUP']):
 		flash(_('You do not have access to this service'))
 		return render_template('session/login.html', ref=request.values.get('ref'))
-	set_session(user)
-	return redirect(url_for('session.mfa_auth', ref=request.values.get('ref', url_for('index'))))
 
-def login_required_pre_mfa(no_redirect=False):
-	def wrapper(func):
-		@functools.wraps(func)
-		def decorator(*args, **kwargs):
-			if not request.user_pre_mfa:
-				if no_redirect:
-					abort(403)
-				flash(_('You need to login first'))
-				return redirect(url_for('session.login', ref=request.full_path))
-			return func(*args, **kwargs)
-		return decorator
-	return wrapper
+	if user.mfa_enabled:
+		return render_template('session/mfa_auth.html', ref=request.values.get('ref'), login_state=LoginState(user))
+
+	set_session(user)
+	return secure_local_redirect(request.values.get('ref', url_for('index')))
 
 def login_required(permission_check=lambda: True):
 	def wrapper(func):
 		@functools.wraps(func)
 		def decorator(*args, **kwargs):
-			if not request.user_pre_mfa:
+			if not request.user:
 				flash(_('You need to login first'))
 				return redirect(url_for('session.login', ref=request.full_path))
-			if not request.user:
-				return redirect(url_for('session.mfa_auth', ref=request.full_path))
 			if not permission_check():
 				abort(403)
 			return func(*args, **kwargs)
 		return decorator
 	return wrapper
 
-@bp.route('/mfa/auth', methods=['GET'])
-@login_required_pre_mfa()
-def mfa_auth():
-	if not request.user_pre_mfa.mfa_enabled:
-		request.session_pre_mfa.mfa_done = True
-		db.session.commit()
-		set_request_user()
-	if request.session_pre_mfa.mfa_done:
-		return secure_local_redirect(request.values.get('ref', url_for('index')))
-	return render_template('session/mfa_auth.html', ref=request.values.get('ref'))
-
 @bp.route('/mfa/auth', methods=['POST'])
-@login_required_pre_mfa()
 def mfa_auth_finish():
-	delay = mfa_ratelimit.get_delay(request.user_pre_mfa.id)
+	# pylint: disable=too-many-return-statements
+	code = request.form['code']
+	login_state = LoginState.from_value(request.form['login_state'])
+	if not login_state:
+		return redirect(url_for('session.login', ref=request.values.get('ref')))
+	user = login_state.user
+
+	delay = mfa_ratelimit.get_delay(user.id)
 	if delay:
 		flash(_('We received too many invalid attempts! Please wait at least %s.')%format_delay(delay))
-		return redirect(url_for('session.mfa_auth', ref=request.values.get('ref')))
-	for method in request.user_pre_mfa.mfa_totp_methods:
-		if method.verify(request.form['code']):
-			request.session_pre_mfa.mfa_done = True
+		return render_template('session/mfa_auth.html', ref=request.values.get('ref'), login_state=login_state)
+
+	for method in user.mfa_totp_methods:
+		if method.verify(code):
 			db.session.commit()
-			set_request_user()
+			set_session(user)
 			return secure_local_redirect(request.values.get('ref', url_for('index')))
-	for method in request.user_pre_mfa.mfa_recovery_codes:
-		if method.verify(request.form['code']):
+	for method in user.mfa_recovery_codes:
+		if method.verify(code):
 			db.session.delete(method)
-			request.session_pre_mfa.mfa_done = True
 			db.session.commit()
-			set_request_user()
-			if len(request.user_pre_mfa.mfa_recovery_codes) <= 1:
+			set_session(user)
+			if len(user.mfa_recovery_codes) <= 1:
 				flash(_('You have exhausted your recovery codes. Please generate new ones now!'))
 				return redirect(url_for('selfservice.setup_mfa'))
-			if len(request.user_pre_mfa.mfa_recovery_codes) <= 5:
+			if len(user.mfa_recovery_codes) <= 5:
 				flash(_('You only have a few recovery codes remaining. Make sure to generate new ones before they run out.'))
 				return redirect(url_for('selfservice.setup_mfa'))
 			return secure_local_redirect(request.values.get('ref', url_for('index')))
-	mfa_ratelimit.log(request.user_pre_mfa.id)
+
+	mfa_ratelimit.log(user.id)
 	flash(_('Two-factor authentication failed'))
-	return redirect(url_for('session.mfa_auth', ref=request.values.get('ref')))
+	return render_template('session/mfa_auth.html', ref=request.values.get('ref'), login_state=login_state)
 
 if WEBAUTHN_SUPPORTED:
 	@bp.route("/mfa/auth/webauthn/begin", methods=["POST"])
-	@login_required_pre_mfa(no_redirect=True)
 	def mfa_auth_webauthn_begin():
-		server = get_webauthn_server()
-		creds = [method.cred for method in request.user_pre_mfa.mfa_webauthn_methods]
+		data = cbor.decode(request.get_data())
+		login_state = LoginState.from_value(data['loginState'])
+		if not login_state:
+			abort(403)
+		creds = [method.cred for method in login_state.user.mfa_webauthn_methods]
 		if not creds:
 			abort(404)
+		server = get_webauthn_server()
 		auth_data, state = server.authenticate_begin(creds, user_verification='discouraged')
 		session["webauthn-state"] = state
 		return cbor.encode(auth_data)
 
 	@bp.route("/mfa/auth/webauthn/complete", methods=["POST"])
-	@login_required_pre_mfa(no_redirect=True)
 	def mfa_auth_webauthn_complete():
-		server = get_webauthn_server()
-		creds = [method.cred for method in request.user_pre_mfa.mfa_webauthn_methods]
-		if not creds:
-			abort(404)
 		data = cbor.decode(request.get_data())
+		login_state = LoginState.from_value(data['loginState'])
+		if not login_state:
+			abort(403)
 		credential_id = data["credentialId"]
 		client_data = ClientData(data["clientDataJSON"])
 		auth_data = AuthenticatorData(data["authenticatorData"])
 		signature = data["signature"]
+		creds = [method.cred for method in login_state.user.mfa_webauthn_methods]
+		if not creds:
+			abort(404)
 		# authenticate_complete() (as of python-fido2 v0.5.0, the version in Debian Buster)
 		# does not check signCount, although the spec recommends it
+		server = get_webauthn_server()
 		server.authenticate_complete(
 			session.pop("webauthn-state"),
 			creds,
@@ -211,9 +231,7 @@ if WEBAUTHN_SUPPORTED:
 			auth_data,
 			signature,
 		)
-		request.session_pre_mfa.mfa_done = True
-		db.session.commit()
-		set_request_user()
+		set_session(login_state.user)
 		return cbor.encode({"status": "OK"})
 
 @bp.route("/login/device/start")

@@ -1,5 +1,6 @@
 import time
 import unittest
+import re
 
 from flask import url_for, request
 
@@ -190,6 +191,14 @@ class TestSession(UffdTestCase):
 		self.assertEqual(DeviceLoginConfirmation.query.all(), [])
 
 class TestMfaViews(UffdTestCase):
+	def extract_login_state(self, resp):
+		# <input type="hidden" name="login_state" value="{{ login_state }}">
+		m = re.search(r'<input[^>]* name="login_state"[^>]* value="([^"]*)"[^>]*>', resp.data.decode())
+		self.assertIsNotNone(m)
+		login_state = m.groups()[0]
+		self.assertTrue(login_state)
+		return login_state
+
 	def add_recovery_codes(self, count=10):
 		user = self.get_user()
 		for _ in range(count):
@@ -205,31 +214,27 @@ class TestMfaViews(UffdTestCase):
 		self.add_totp()
 		db.session.commit()
 		self.assertIsNone(request.user)
-		r = self.login_as('user')
-		dump('mfa_auth_redirected', r)
-		self.assertEqual(r.status_code, 200)
-		self.assertIn(b'/mfa/auth', r.data)
-		self.assertIsNone(request.user)
-		r = self.client.get(path=url_for('session.mfa_auth'), follow_redirects=False)
+		r = self.login_as('user', ref='/redirecttarget')
 		dump('mfa_auth', r)
 		self.assertEqual(r.status_code, 200)
+		self.assertIn(b'/mfa/auth', r.data)
+		self.assertIn(b'redirecttarget', r.data)
 		self.assertIsNone(request.user)
 
 	def test_auth_disabled(self):
 		self.assertIsNone(request.user)
-		self.login_as('user')
-		r = self.client.get(path=url_for('session.mfa_auth', ref='/redirecttarget'), follow_redirects=False)
-		self.assertEqual(r.status_code, 302)
-		self.assertTrue(r.location.endswith('/redirecttarget'))
+		r = self.login_as('user', ref='/redirecttarget')
+		if hasattr(r, 'request'): # Not available in Buster/Bullseye
+			self.assertTrue(r.request.base_url.endswith('/redirecttarget'))
 		self.assertIsNotNone(request.user)
+		self.assertEqual(request.user.loginname, 'testuser')
 
 	def test_auth_recovery_only(self):
 		self.add_recovery_codes()
 		self.assertIsNone(request.user)
-		self.login_as('user')
-		r = self.client.get(path=url_for('session.mfa_auth', ref='/redirecttarget'), follow_redirects=False)
-		self.assertEqual(r.status_code, 302)
-		self.assertTrue(r.location.endswith('/redirecttarget'))
+		r = self.login_as('user', ref='/redirecttarget')
+		if hasattr(r, 'request'): # Not available in Buster/Bullseye
+			self.assertTrue(r.request.base_url.endswith('/redirecttarget'))
 		self.assertIsNotNone(request.user)
 
 	def test_auth_recovery_code(self):
@@ -239,15 +244,16 @@ class TestMfaViews(UffdTestCase):
 		db.session.add(method)
 		db.session.commit()
 		method_id = method.id
-		self.login_as('user')
-		r = self.client.get(path=url_for('session.mfa_auth'), follow_redirects=False)
-		dump('mfa_auth_recovery_code', r)
+		r = self.login_as('user', ref='/redirecttarget')
 		self.assertEqual(r.status_code, 200)
+		self.assertIn(b'/mfa/auth', r.data)
+		self.assertIn(b'redirecttarget', r.data)
 		self.assertIsNone(request.user)
-		r = self.client.post(path=url_for('session.mfa_auth_finish', ref='/redirecttarget'), data={'code': method.code_value})
+		r = self.client.post(path=url_for('session.mfa_auth_finish', ref='/redirecttarget'), data={'code': method.code_value, 'login_state': self.extract_login_state(r)})
 		self.assertEqual(r.status_code, 302)
 		self.assertTrue(r.location.endswith('/redirecttarget'))
 		self.assertIsNotNone(request.user)
+		self.assertEqual(request.user.loginname, 'testuser')
 		self.assertEqual(len(RecoveryCodeMethod.query.filter_by(id=method_id).all()), 0)
 
 	def test_auth_totp_code(self):
@@ -257,16 +263,17 @@ class TestMfaViews(UffdTestCase):
 		raw_key = method.raw_key
 		db.session.add(method)
 		db.session.commit()
-		self.login_as('user')
-		r = self.client.get(path=url_for('session.mfa_auth'), follow_redirects=False)
-		dump('mfa_auth_totp_code', r)
+		r = self.login_as('user', ref='/redirecttarget')
 		self.assertEqual(r.status_code, 200)
+		self.assertIn(b'/mfa/auth', r.data)
+		self.assertIn(b'redirecttarget', r.data)
 		self.assertIsNone(request.user)
 		code = _hotp(int(time.time()/30), raw_key)
-		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': code}, follow_redirects=True)
-		dump('mfa_auth_totp_code_submit', r)
-		self.assertEqual(r.status_code, 200)
+		r = self.client.post(path=url_for('session.mfa_auth_finish', ref='/redirecttarget'), data={'code': code, 'login_state': self.extract_login_state(r)})
+		self.assertEqual(r.status_code, 302)
+		self.assertTrue(r.location.endswith('/redirecttarget'))
 		self.assertIsNotNone(request.user)
+		self.assertEqual(request.user.loginname, 'testuser')
 
 	def test_auth_totp_code_reuse(self):
 		self.add_recovery_codes()
@@ -275,30 +282,23 @@ class TestMfaViews(UffdTestCase):
 		raw_key = method.raw_key
 		db.session.add(method)
 		db.session.commit()
-		self.login_as('user')
-		r = self.client.get(path=url_for('session.mfa_auth'), follow_redirects=False)
-		self.assertEqual(r.status_code, 200)
-		self.assertIsNone(request.user)
+		r = self.login_as('user')
 		code = _hotp(int(time.time()/30), raw_key)
-		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': code}, follow_redirects=True)
-		self.assertEqual(r.status_code, 200)
+		r = self.client.post(path=url_for('session.mfa_auth_finish', ref='/redirecttarget'), data={'code': code, 'login_state': self.extract_login_state(r)})
+		self.assertEqual(r.status_code, 302)
+		self.assertTrue(r.location.endswith('/redirecttarget'))
 		self.assertIsNotNone(request.user)
-		self.login_as('user')
-		r = self.client.get(path=url_for('session.mfa_auth'), follow_redirects=False)
-		self.assertEqual(r.status_code, 200)
-		self.assertIsNone(request.user)
-		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': code}, follow_redirects=True)
+		r = self.login_as('user')
+		r = self.client.post(path=url_for('session.mfa_auth_finish', ref='/redirecttarget'), data={'code': code, 'login_state': self.extract_login_state(r)})
+		dump('mfa_auth_totp_code_reuse', r)
 		self.assertEqual(r.status_code, 200)
 		self.assertIsNone(request.user)
 
 	def test_auth_empty_code(self):
 		self.add_recovery_codes()
 		self.add_totp()
-		self.login_as('user')
-		r = self.client.get(path=url_for('session.mfa_auth'), follow_redirects=False)
-		self.assertEqual(r.status_code, 200)
-		self.assertIsNone(request.user)
-		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': ''}, follow_redirects=True)
+		r = self.login_as('user')
+		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': '', 'login_state': self.extract_login_state(r)})
 		dump('mfa_auth_empty_code', r)
 		self.assertEqual(r.status_code, 200)
 		self.assertIsNone(request.user)
@@ -310,13 +310,10 @@ class TestMfaViews(UffdTestCase):
 		raw_key = method.raw_key
 		db.session.add(method)
 		db.session.commit()
-		self.login_as('user')
-		r = self.client.get(path=url_for('session.mfa_auth'), follow_redirects=False)
-		self.assertEqual(r.status_code, 200)
-		self.assertIsNone(request.user)
+		r = self.login_as('user')
 		code = _hotp(int(time.time()/30), raw_key)
 		code = str(int(code[0])+1)[-1] + code[1:]
-		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': code}, follow_redirects=True)
+		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': code, 'login_state': self.extract_login_state(r)})
 		dump('mfa_auth_invalid_code', r)
 		self.assertEqual(r.status_code, 200)
 		self.assertIsNone(request.user)
@@ -328,17 +325,35 @@ class TestMfaViews(UffdTestCase):
 		raw_key = method.raw_key
 		db.session.add(method)
 		db.session.commit()
-		self.login_as('user')
-		self.assertIsNone(request.user)
+		r = self.login_as('user')
+		login_state = self.extract_login_state(r)
 		code = _hotp(int(time.time()/30), raw_key)
 		inv_code = str(int(code[0])+1)[-1] + code[1:]
+		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': inv_code, 'login_state': login_state})
+		self.assertEqual(r.status_code, 200)
+		self.assertIsNone(request.user)
 		for i in range(20):
-			r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': inv_code}, follow_redirects=True)
+			r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': inv_code, 'login_state': login_state})
 			self.assertEqual(r.status_code, 200)
 			self.assertIsNone(request.user)
-		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': code}, follow_redirects=True)
+		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': code, 'login_state': login_state})
 		dump('mfa_auth_ratelimit', r)
 		self.assertEqual(r.status_code, 200)
+		self.assertIsNone(request.user)
+
+	def test_auth_invalid_code(self):
+		self.app.config['MFA_AUTH_TIMEOUT_SECONDS'] = 2
+		self.add_recovery_codes()
+		self.add_totp()
+		method = TOTPMethod(user=self.get_user(), name='testname')
+		raw_key = method.raw_key
+		db.session.add(method)
+		db.session.commit()
+		r = self.login_as('user')
+		time.sleep(3)
+		code = _hotp(int(time.time()/30), raw_key)
+		r = self.client.post(path=url_for('session.mfa_auth_finish'), data={'code': code, 'login_state': self.extract_login_state(r)})
+		dump('mfa_auth_timeout', r)
 		self.assertIsNone(request.user)
 
 	# TODO: webauthn auth tests
