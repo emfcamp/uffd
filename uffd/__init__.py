@@ -98,7 +98,7 @@ def create_app(test_config=None): # pylint: disable=too-many-locals,too-many-sta
 	class PatchedBabel(Babel):
 		@property
 		def default_timezone(self):
-            if get_babel().default_timezone == 'LOCALTZ':
+			if get_babel().default_timezone == 'LOCALTZ':
 				return LOCALTZ
 			return super().default_timezone
 
