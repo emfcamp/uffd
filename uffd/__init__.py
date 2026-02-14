@@ -4,7 +4,7 @@ import secrets
 import sys
 
 from flask import Flask, redirect, url_for, request, render_template
-from flask_babel import Babel
+from flask_babel import Babel, get_babel
 from babel.dates import LOCALTZ
 from werkzeug.exceptions import Forbidden
 from flask_migrate import Migrate
@@ -98,7 +98,7 @@ def create_app(test_config=None): # pylint: disable=too-many-locals,too-many-sta
 	class PatchedBabel(Babel):
 		@property
 		def default_timezone(self):
-			if self.app.config['BABEL_DEFAULT_TIMEZONE'] == 'LOCALTZ':
+            if get_babel().default_timezone == 'LOCALTZ':
 				return LOCALTZ
 			return super().default_timezone
 
