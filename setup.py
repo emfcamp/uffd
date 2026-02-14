@@ -45,6 +45,7 @@ setup(
 		'itsdangerous==0.24',
 		'prometheus-client==0.9',
 		'ua-parser==0.8.0',
+        'legacycrypt==0.3',
 
 		# The main dependencies on their own lead to version collisions and pip is
 		# not very good at resolving them, so we pin the versions from Debian Buster

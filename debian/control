@@ -28,6 +28,7 @@ Depends:
  python3-flask-babel,
  python3-argon2,
  python3-itsdangerous,
+ python3-legacycrypt,
  uwsgi,
  uwsgi-plugin-python3,
 Recommends:
