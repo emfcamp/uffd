@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           export DEBIAN_FRONTEND=noninteractive
-          sudo rm /var/lib/man-db/auto-update
+          sudo rm -f /var/lib/man-db/auto-update
           sudo apt-get update
           sudo apt-get install -y reprepro gnupg jq
       - name: Set up GPG
