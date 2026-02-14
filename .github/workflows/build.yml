@@ -7,7 +7,6 @@ jobs:
       fail-fast: false
       matrix:
         debian_release:
-          - bookworm
           - trixie
           - forky
     env:
