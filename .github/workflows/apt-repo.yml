@@ -13,7 +13,7 @@ jobs:
     env:
       GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
       KEY_ID: ${{ secrets.KEY_ID }}
-      CODENAMES: "forky"
+      CODENAMES: "trixie"
     steps:
       - name: Install dependencies
         run: |
