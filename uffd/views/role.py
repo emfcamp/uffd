@@ -48,9 +48,11 @@ def update(roleid=None):
 		else:
 			role.moderator_group = Group.query.get(request.values['moderator-group'])
 		for included_role in Role.query.all():
-			if included_role != role and request.values.get('include-role-{}'.format(included_role.id)):
+			has_role_already = included_role in role.included_roles
+			want_role = request.values.get(f'include-role-{included_role.id}')
+			if want_role and not has_role_already:
 				role.included_roles.append(included_role)
-			elif included_role in role.included_roles:
+			elif not want_role and has_role_already:
 				role.included_roles.remove(included_role)
 		role.groups.clear()
 		for group in Group.query.all():
